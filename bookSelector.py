@@ -32,6 +32,14 @@ VERSION
 import sys, os, traceback, optparse
 import time
 import re
+GOOD_TERMINALS = ["xterm"]
+
+
+def set_title():
+     # Tell the terminal to change the current title.
+     msg = "###############  Magic Library  ###############"
+     if os.getenv("TERM") in GOOD_TERMINALS:
+         print("\x1B]0;%s\x07" % msg)
 #from pexpect import run, spawn
 
 # generates a random number from 1 to s
@@ -43,7 +51,7 @@ def randomSelector(s):
 def checkFile():
     try:      
         # returns absolute path of file
-        path = os.path.abspath("randomBookSelector/bookList.txt")
+        path = os.path.abspath("randomBookSelector/randomBookSelector/bookList.txt")
         # reads, line by line, strings in file and saves them to list 'lines'
         with open(path) as f:
             lines = f.read().splitlines()
@@ -53,16 +61,22 @@ def checkFile():
 
 def fillLibrary():
     f= open("bookList.txt","w+")
-    library = input("How many books do you wish to add to the magical random library?")
-    for i in library:
-        f.write(input("Book " + i + ":\n"))
+    amountBooks = int(input("How many books do you wish to add to the magical random library?\n"))
+    for i in range(0, amountBooks):
+        f.write(input("Book:\n"))
 
-def main ():
-    
-    global options, args
+def main (argv):
+
+    # Try to change the title of the terminal to 'magic library'
+    funcs = set_title, main
+
+    for func in funcs:
+        try:
+            func()
+        except Exception:
+            pass  # or you could use 'continue'
 
     # try to open file it exist, if not create file and fill it
-    
     lines = checkFile()
     
     if lines == -1 :
@@ -70,7 +84,7 @@ def main ():
     
     lines = checkFile()    
 
-    key = input("pressing (0) will quit \npressing (1) will list the books in the library \npressing (2) will generate a book:\n")
+    key = int(input("pressing (0) will quit \npressing (1) will list the books in the library \npressing (2) will generate a book:\n"))
     if key == 0 :
         sys.exit(0)
     if key == 1 :
@@ -78,7 +92,7 @@ def main ():
     if key == 2 :
         n = randomSelector(len(lines))
         print(lines[n])
-
+'''
 # came with the skeleton - unsure what it does
 if __name__ == '__main__':
     try:
@@ -103,3 +117,7 @@ if __name__ == '__main__':
         print str(e)
         traceback.print_exc()
         os._exit(1)
+        '''
+
+if __name__ == "__main__":
+    main(sys.argv)
